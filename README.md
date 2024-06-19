@@ -1,16 +1,16 @@
 # COMPANIES JSON Generator
 
-Generates arbitrary amount of fake companies JSON information, useful for tests where big datasets are required (e.x: 1GB+ fake data).
+Generates arbitrary amount of fake companies JSON information, useful for tests where big datasets are required (e.x: 1GB+ fake data). I developed this project when I wanted to have large amount of data (hundreds of thounsands of data) for indexing it and testing a real time search at scale using _a [TypeSense](https://typesense.org/) search index component_.
 
-_It generates a Million of random fake companies data by default in less than 10 seconds!_
-
-This number was chosen to avoid having RAM problems (getting out of RAM) in a 16GB RAM machine and get the result really fast
+TypeSense is an easy tool to create real time search indexes that can be selfhosted or hosted in the cloud, its pricing model tends to scale better than Algolia's, it's relatively lightweight on resources and for simple solutions it may help develop real-time search indexes without using more complex, robust, expensive technology like ElasticSearch.
 
 ## Known limitations:
 
 Because this program is not optimized for low memory footprint using advanced techniques like batch processing it can use a lot of RAM depending on the amount of generated inputs.
 
 Nonetheless it is perfectly viable to generate up to 10 millions of entries (1.6GB) in about 10 seconds using a 32GB RAM machine. Time may vary depending on the used SSD, processor and other computer specs.
+
+FYI: In a 16GB of RAM machine I used some time ago, generating 1 million of different inputs took about 10 seconds.
 
 ## Example usage: 
 
@@ -26,7 +26,8 @@ Nonetheless it is perfectly viable to generate up to 10 millions of entries (1.6
 1. Get the source code using the following command
 
 ```shell
-git clone
+git clone https://github.com/jigth/companies-json-generator
+cd companies-json-generator
 ```
 
 2. Execute the following command from a shell (replace the output path with an appropriate path)
