@@ -6,4 +6,7 @@ COPY go.mod go.sum ./
 RUN go mod download && go mod verify
 
 COPY . .
-ENTRYPOINT ["go", "run", "/app/src/main.go"]
+
+RUN go build -o /companies-generator ./src
+
+ENTRYPOINT ["/companies-generator"]
