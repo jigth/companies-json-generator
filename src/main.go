@@ -1,23 +1,23 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
-	"bufio"
-	"strings"
 	"strconv"
+
 	jsongenerator "github.com/jigth/companies-json-generator/src/json-generator"
 )
 
 func main() {
-	outputPath := os.Args[1]
-
-	companiesAmount := readUserInput()
+	outputPath, companiesAmount, err := parseArguments()
+	if err != nil {
+		panic(err)
+	}
 
 	companies, err := jsongenerator.CreateFakeCompanies(companiesAmount)
 	if err != nil {
-		fmt.Println(err)
-		panic("error unmarshaling companies")
+		panic(err)
 	}
 
 	file, err := os.Create(outputPath)
@@ -26,34 +26,44 @@ func main() {
 		panic("could not create the file in path " + outputPath)
 	}
 
-	_, err = fmt.Fprintf(file, "%v", companies)	
+	_, err = fmt.Fprintf(file, "%v", companies)
 	if err != nil {
 		fmt.Println(err)
 		panic("Could not write companies data in path " + outputPath)
 	}
 
+	file.Close()
+
 	fmt.Printf("%v Companies have been generated succesfully at %v\n", companiesAmount, outputPath)
 }
 
-func readUserInput() int {
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Println("Please enter the number of fake companies data you want to generate")
-
-	companiesAmountStr, err := reader.ReadString('\n')
-	if err != nil {
-		fmt.Println(err)
-		panic("error reading the input of companies to generate")
+func parseArguments() (string, int, error) {
+	if len(os.Args) < 3 {
+		return "", 0, errors.New(
+			"\n\nerror parsing arguments.\nUse the program like this:\n" +
+				"go run main.go <outputPath> <numOfOutputElements>\n" +
+				"For example, to generate 30 inputs do this command:\n\t" +
+				"go run main.go myFile.json 30",
+		)
 	}
 
-	// Trim sufixes for Windows and Unix based systems
-	companiesAmountStr = strings.TrimSuffix(companiesAmountStr, "\n")
-	companiesAmountStr = strings.TrimSuffix(companiesAmountStr, "\r")
+	outputPath := os.Args[1]
+	objectsAmount := os.Args[2] // Num of objects to generate
 
-	companiesAmount, err := strconv.Atoi(companiesAmountStr)
+	parsedAmount, err := getParsedInt(objectsAmount)
 	if err != nil {
-		fmt.Println(err)
-		panic("error reading the input of companies to generate")
+		return "", 0, err
 	}
 
-	return companiesAmount
+	return outputPath, parsedAmount, nil
+}
+
+func getParsedInt(strNumber string) (int, error) {
+	companiesAmount, err := strconv.Atoi(strNumber)
+	if err != nil {
+		fmt.Println(err)
+		return 0, errors.New("could not parse objects amount, be sure you use an int")
+	}
+
+	return companiesAmount, nil
 }
